@@ -1,10 +1,11 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ImageUpload from "@/components/ImageUpload";
+import CameraCapture from "@/components/CameraCapture";
 import ResultsDisplay from "@/components/ResultsDisplay";
 import DiseasesInfoSection from "@/components/DiseasesInfoSection";
 import { EyeDisease, detectEyeDisease, initModel } from "@/lib/ml-model";
@@ -18,6 +19,7 @@ const Index = () => {
   });
   const [showResults, setShowResults] = useState(false);
   const [isModelLoading, setIsModelLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<string>("upload");
 
   useEffect(() => {
     // Initialize the ML model when the component mounts
@@ -61,6 +63,38 @@ const Index = () => {
     try {
       // Process the image with our ML model
       const result = await detectEyeDisease(selectedImage);
+      
+      // Short delay to simulate processing (remove in production)
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      setResults({
+        disease: result.disease,
+        confidence: result.confidence
+      });
+      setShowResults(true);
+    } catch (error) {
+      console.error("Error analyzing image:", error);
+      toast({
+        title: "Error analyzing image",
+        description: "There was a problem processing your image. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleCameraCaptured = async (imageData: string) => {
+    setSelectedImage(imageData);
+    setShowResults(false);
+    setResults({ disease: null, confidence: 0 });
+    
+    // Automatically analyze the captured image
+    setIsProcessing(true);
+
+    try {
+      // Process the image with our ML model
+      const result = await detectEyeDisease(imageData);
       
       // Short delay to simulate processing (remove in production)
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -184,18 +218,30 @@ const Index = () => {
           
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="text-lg font-medium text-medical-gray-800 mb-4">Upload Your Image</h3>
-              <ImageUpload onImageSelected={handleImageSelected} isProcessing={isProcessing} />
+              <h3 className="text-lg font-medium text-medical-gray-800 mb-4">Capture or Upload Image</h3>
               
-              <div className="mt-6 flex justify-center">
-                <Button 
-                  onClick={handleAnalyzeClick} 
-                  className="bg-medical-blue-600 hover:bg-medical-blue-700 text-white px-8 py-2 text-lg"
-                  disabled={isProcessing || !selectedImage || isModelLoading}
-                >
-                  {isProcessing ? "Analyzing..." : isModelLoading ? "Loading AI Model..." : "Analyze Image"}
-                </Button>
-              </div>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="upload">Upload Image</TabsTrigger>
+                  <TabsTrigger value="camera">Use Camera</TabsTrigger>
+                </TabsList>
+                <TabsContent value="upload" className="mt-4">
+                  <ImageUpload onImageSelected={handleImageSelected} isProcessing={isProcessing} />
+                  
+                  <div className="mt-6 flex justify-center">
+                    <Button 
+                      onClick={handleAnalyzeClick} 
+                      className="bg-medical-blue-600 hover:bg-medical-blue-700 text-white px-8 py-2 text-lg"
+                      disabled={isProcessing || !selectedImage || isModelLoading}
+                    >
+                      {isProcessing ? "Analyzing..." : isModelLoading ? "Loading AI Model..." : "Analyze Image"}
+                    </Button>
+                  </div>
+                </TabsContent>
+                <TabsContent value="camera" className="mt-4">
+                  <CameraCapture onImageCaptured={handleCameraCaptured} isProcessing={isProcessing} />
+                </TabsContent>
+              </Tabs>
 
               {!isModelLoading && (
                 <div className="mt-4 text-center text-medical-gray-500 text-sm">
@@ -206,13 +252,27 @@ const Index = () => {
             
             <div>
               <h3 className="text-lg font-medium text-medical-gray-800 mb-4">Analysis Results</h3>
+              
+              {selectedImage && !showResults && !isProcessing && (
+                <div className="mb-4">
+                  <h4 className="text-sm font-medium text-medical-gray-700 mb-2">Selected Image:</h4>
+                  <div className="rounded-lg overflow-hidden border border-medical-gray-200">
+                    <img 
+                      src={selectedImage} 
+                      alt="Selected eye scan" 
+                      className="w-full h-auto object-contain"
+                    />
+                  </div>
+                </div>
+              )}
+              
               <ResultsDisplay 
                 isVisible={showResults} 
                 disease={results.disease} 
                 confidence={results.confidence}
               />
               
-              {!showResults && !isProcessing && (
+              {!showResults && !isProcessing && !selectedImage && (
                 <Card className="bg-medical-gray-50 border border-medical-gray-200">
                   <CardContent className="p-8 flex flex-col items-center justify-center text-center h-64">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-medical-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -220,7 +280,7 @@ const Index = () => {
                     </svg>
                     <h4 className="text-xl font-medium text-medical-gray-700 mb-2">No Results Yet</h4>
                     <p className="text-medical-gray-500">
-                      Upload an eye scan image and click "Analyze Image" to get your results.
+                      {activeTab === "upload" ? "Upload an eye scan image and click 'Analyze Image'" : "Use your camera to capture an eye scan"}
                     </p>
                   </CardContent>
                 </Card>
