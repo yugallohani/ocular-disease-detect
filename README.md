@@ -1,73 +1,59 @@
-# Welcome to your Lovable project
 
-## Project info
+# Ocular Disease Detection
 
-**URL**: https://lovable.dev/projects/2c68bf78-9527-4d23-8233-5c3e10ce2918
+An AI-powered application for analyzing eye scan images to detect and classify potential eye diseases.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- **AI-Powered Analysis**: Upload retinal scan images for automated disease detection
+- **Disease Classification**: Identifies common eye conditions including:
+  - Diabetic Retinopathy
+  - Glaucoma
+  - Cataract
+  - Age-related Macular Degeneration
+  - Hypertensive Retinopathy
+  - Myopia
+  - Hypermetropia
+- **Treatment Recommendations**: Provides suggestions based on detected conditions
+- **Educational Resources**: Informative content about common eye diseases
+- **Medical-Grade UI**: Professional interface designed for healthcare settings
 
-**Use Lovable**
+## Technology Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2c68bf78-9527-4d23-8233-5c3e10ce2918) and start prompting.
+- React with TypeScript
+- Hugging Face Transformers.js for machine learning
+- Tailwind CSS for styling
+- shadcn/ui component library
 
-Changes made via Lovable will be committed automatically to this repo.
+## Usage
 
-**Use your preferred IDE**
+1. Upload an eye scan image (retinal scan recommended)
+2. Click "Analyze Image" to process
+3. View detailed results including:
+   - Detected disease (if any)
+   - Confidence level
+   - Symptoms
+   - Treatment options
+   - Prevention recommendations
+   - Risk factors
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Important Note
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+This application is for demonstration purposes only. In a production environment, it would use:
 
-Follow these steps:
+1. A specialized medical model trained specifically on eye disease images
+2. HIPAA-compliant data handling
+3. Professional medical validation
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Always consult healthcare professionals for actual medical advice and diagnosis.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Demo Images
 
-# Step 3: Install the necessary dependencies.
-npm i
+For testing, you can use retinal scan images from public datasets such as:
+- [EyePACS](https://www.kaggle.com/c/diabetic-retinopathy-detection)
+- [ODIR-5K](https://odir2019.grand-challenge.org/)
+- [MESSIDOR](https://www.adcis.net/en/third-party/messidor/)
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## Disclaimer
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/2c68bf78-9527-4d23-8233-5c3e10ce2918) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+This tool is designed as a screening aid and should not replace professional medical advice, diagnosis, or treatment. Always seek the advice of your ophthalmologist or other qualified health provider with any questions you may have regarding a medical condition.
